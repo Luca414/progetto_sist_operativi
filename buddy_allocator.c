@@ -2,6 +2,7 @@
 #include <assert.h>
 #include <math.h> // for floor and log2
 #include "buddy_allocator.h"
+#include "bit_map.h" //aggiunto
 
 // these are trivial helpers to support you in case you want
 // to do a bitmap implementation
@@ -30,7 +31,7 @@ int BuddyAllocator_calcSize(int num_levels) {
   int list_items=1<<(num_levels+1); // maximum number of allocations, used to determine the max list items
   int list_alloc_size=(sizeof(BuddyListItem)+sizeof(int))*list_items;
   return list_alloc_size;
-}
+} 
 
 // creates an item from the index
 // and puts it in the corresponding list
@@ -39,7 +40,7 @@ BuddyListItem* BuddyAllocator_createListItem(BuddyAllocator* alloc,
                                              BuddyListItem* parent_ptr){
   BuddyListItem* item=(BuddyListItem*)PoolAllocator_getBlock(&alloc->list_allocator);
   item->idx=idx;
-  item->level=levelIdx(idx);
+  item->level=levelIdx(idx); 
 
   // size of an item = to the min_size +  2^the number of levels from the bottom
   item->size=(1<<(alloc->num_levels-item->level))*alloc->min_bucket_size;

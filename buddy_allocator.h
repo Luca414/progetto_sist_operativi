@@ -1,11 +1,12 @@
 #pragma once
-#include "pool_allocator.h"
-#include "linked_list.h"
+#include "bit_map.h"  // aggiunto
+//#include "pool_allocator.h"
+//#include "linked_list.h"
 
 #define MAX_LEVELS 16
 
 // one entry of the buddy list
-typedef struct BuddyListItem {
+/* typedef struct BuddyListItem {
   ListItem list;
   int idx;   // tree index
   int level; // level for the buddy
@@ -13,13 +14,13 @@ typedef struct BuddyListItem {
   int size;
   struct BuddyListItem* buddy_ptr;
   struct BuddyListItem* parent_ptr;
-} BuddyListItem;
+} BuddyListItem; */
 
 
 typedef struct  {
-  ListHead free[MAX_LEVELS];
+  //ListHead free[MAX_LEVELS];
   int num_levels;
-  PoolAllocator list_allocator;
+  //PoolAllocator list_allocator;
   char* memory; // the memory area to be managed
   int min_bucket_size; // the minimum page of RAM that can be returned
 } BuddyAllocator;
@@ -40,12 +41,12 @@ void BuddyAllocator_init(BuddyAllocator* alloc,
 // returns (allocates) a buddy at a given level.
 // side effect on the internal structures
 // 0 id no memory available
-BuddyListItem* BuddyAllocator_getBuddy(BuddyAllocator* alloc, int level);
+/*BuddyListItem* */int BuddyAllocator_getBuddy(BuddyAllocator* alloc, int level);
 
 
 // releases an allocated buddy, performing the necessary joins
 // side effect on the internal structures
-void BuddyAllocator_releaseBuddy(BuddyAllocator* alloc, BuddyListItem* item);
+void BuddyAllocator_releaseBuddy(BuddyAllocator* alloc/*, BuddyListItem* item*/);
 
 //allocates memory
 void* BuddyAllocator_malloc(BuddyAllocator* alloc, int size);
