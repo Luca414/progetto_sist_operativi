@@ -1,5 +1,42 @@
 #include <stdio.h> // Per debug (printf)
 #include <math.h> // per calcoli vari
+#include <assert.h>
+#include <stdlib.h>
+
+#include "buddy_red.h"
+#include "bit_map_red.h"
+
+
+
+
+int BuddyAllocator_init(BuddyAllocator *alloc, int num_levels, char* buffer, int buffer_size, char* memory, int memory_size, int min_bucket_size){
+  
+  // calcolo il numero massimo di nodi dell'albero del buddy
+  int max_nodes = (1<<(num_levels+1))-1; 
+  int bitmap_size = (max_nodes+7)/8;
+  if (buffer_size<bitmap_size){
+    printf("Dimensione non corretta");
+    return 0;
+    }
+  if (log2(memory_size) != floor(log2(memory_size)) ){
+    memory_size = min_bucket_size << num_levels;
+    }
+    
+  alloc->num_levels=num_levels;
+  alloc->memory=memory;
+  alloc->min_bucket_size=min_bucket_size;
+  alloc->memory_size=memory_size;
+  
+  for (int i=0;i<bitmap_size;i++){
+    buffer[i]=0;
+    }
+  
+  BitMap_init(&(alloc->bitmap),(bitmap_size*8),buffer);
+  
+  return 1;
+  
+}
+
 
 
 
@@ -78,7 +115,7 @@ int main() {
         printf("Errore nella determinazione del livello.\n");
     }
     
-    int total_blocks = 16; // Memoria con 16 blocchi (array da 0 a 15)
+    int total_blocks = 1048576; // Memoria con 16 blocchi (array da 0 a 15)
 
     // Calcola primo e ultimo nodo del livello
     int first_node, last_node;
