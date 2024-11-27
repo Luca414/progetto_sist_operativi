@@ -15,11 +15,7 @@ int BuddyAllocator_findLevel(size_t total_size, size_t block_min_size, size_t re
         printf("Errore: è stata richiesta una quantità di memoria troppo piccola.\n");
         return -1; 
     }
-    
-    
-    
-    
-    
+   
     // Trova il livello corretto usando le divisioni
     int level = 0;
     size_t block_size = total_size;
@@ -50,15 +46,15 @@ void findLevelNodes(int level, int* first_node, int* last_node) {
 
 
 // Trova l'intervallo di blocchi gestiti da un nodo specifico
-void findNodeBlocks(int node, int total_blocks, int* start_block, int* end_block) {
-    int level = (int)log2(node + 1);  // Livello del nodo
+void findNodeBlocks(int level, int node, int total_blocks, int* start_block, int* end_block) {
+    /*int level = (int)log2(node + 1);  // Livello del nodo*/
     int nodes_in_level = 1 << level; // Numero di nodi nel livello
     int block_range = total_blocks / nodes_in_level; // Blocchi per nodo
 
     int node_in_level = node - ((1 << level) - 1); // Posizione del nodo nel livello
     *start_block = node_in_level * block_range; // Primo blocco
     *end_block = *start_block + block_range - 1; // Ultimo blocco
-}
+} 
 
 
 
@@ -66,42 +62,36 @@ void findNodeBlocks(int node, int total_blocks, int* start_block, int* end_block
 // =================================================================================================================================
 
 
-// TEST PER FUNZIONI SU NODI E BLOCCHI
+// TEST PER FUNZIONI BUDDY A PARTIRE DAI 3 PARAMETRI FORNITI:
 int main() {
+    size_t total_size = 1024 * 1024;    // 1MB
+    size_t block_min_size = 8;         // Blocco minimo di 8 byte
+    size_t request_size = 262144;         // Richiesta di 128 byte
+    
+    printf("\n\nMemoria totale disponibile: %d byte",total_size);
+    printf("\nMemoria da allocare: %d byte",request_size);
+    
+    int level = BuddyAllocator_findLevel(total_size, block_min_size, request_size);
+    if (level >= 0) {
+        printf("Livello trovato: %d", level);
+    } else {
+        printf("Errore nella determinazione del livello.\n");
+    }
+    
     int total_blocks = 16; // Memoria con 16 blocchi (array da 0 a 15)
-    int level = 2;         // Livello da analizzare
 
     // Calcola primo e ultimo nodo del livello
     int first_node, last_node;
     findLevelNodes(level, &first_node, &last_node);
-    printf("Livello %d: primo nodo = %d, ultimo nodo = %d\n", level, first_node, last_node);
+    printf("\n\nLivello %d: primo nodo = %d, ultimo nodo = %d\n", level, first_node, last_node);
 
     // Calcola intervalli di blocchi per ciascun nodo
     for (int node = first_node; node <= last_node; node++) {
         int start_block, end_block;
-        findNodeBlocks(node, total_blocks, &start_block, &end_block);
-        printf("Nodo %d: blocchi da %d a %d\n", node, start_block, end_block);
+        findNodeBlocks(level, node, total_blocks, &start_block, &end_block);  // aggiunto level qui
+        printf("Nodo %d: blocchi da %d a %d\n\n", node, start_block, end_block);
     }
 
     return 0;
 }
-
-
-
-
-// TEST PER CALCOLO LIVELLO
-/*int main() {
-    size_t total_size = 1024 * 1024;    // 1MB
-    size_t block_min_size = 8;         // Blocco minimo di 8 byte
-    size_t request_size = 234;         // Richiesta di 128 byte
-
-    int level = BuddyAllocator_findLevel(total_size, block_min_size, request_size);
-    if (level >= 0) {
-        printf("Livello trovato: %d\n\n", level);
-    } else {
-        printf("Errore nella determinazione del livello.\n");
-    }
-
-    return 0;
-} */
 
