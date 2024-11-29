@@ -9,3 +9,4 @@ typedef struct  {
 } BitMap;
 
 void BitMap_init(BitMap* bit_map, int num_bits, uint8_t* buffer);
+

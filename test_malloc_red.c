@@ -1,58 +1,49 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdint.h>  // questa per usare uint8_t
-
-#include "malloc_red.h"   
-#include "buddy_red.h"    
-#include "bit_map_red.h"  
-
-#define MEMORY_SIZE (1024 * 1024) // 1MB
+#include <math.h>
+#include "buddy_red.h"
+#include "bit_map_red.h"
 
 int main() {
-    // Inizializza un array di 1MB per simulare la memoria gestita
-    // il tipo uint8_t rappresenta esattamente 1byte senza segno
-    uint8_t memory[MEMORY_SIZE];
-    memset(memory, 0, MEMORY_SIZE); // Pulizia iniziale della memoria
+    int num_levels, memory_size, min_bucket_size;
+    
+    printf("\n\nConfigurazione buddy allocator:");
 
-    // Calcola la dimensione necessaria per la bitmap
-    int num_bits = MEMORY_SIZE / 8; // Supponiamo che il blocco minimo sia di 8 byte
-    int bitmap_size = BitMap_getBytes(num_bits);
-    printf("Dimensione bitmap calcolata: %d byte\n", bitmap_size);
+    // Chiedi all'utente di inserire i parametri
+    printf("\nInserisci il numero di livelli dell'albero: ");
+    scanf("%d", &num_levels);
 
-    // Inizializza il Buddy Allocator usando la memoria
-    BuddyAllocator buddy_allocator;
-    BuddyAllocator_init(&buddy_allocator, MEMORY_SIZE, memory);
+    printf("\nInserisci la dimensione totale della memoria (in byte): ");
+    scanf("%d", &memory_size);
 
-    // 4. Test di allocazione e deallocazione
-    printf("Inizio dei test sul Buddy Allocator...\n");
+    printf("\nInserisci la dimensione minima di un bucket (in byte): ");
+    scanf("%d", &min_bucket_size);
 
-    // Test 1: Allocazione di un blocco piccolo (es. 64 byte)
-    void* block1 = my_malloc(64);
-    if (block1) {
-        printf("Allocazione di 64 byte riuscita.\n");
+    // Calcolo del numero massimo di nodi
+    int max_nodes = (1 << (num_levels + 1)) - 1;
+    // Dimensione della bitmap
+    int bitmap_size = (max_nodes + 7) / 8;
+
+    // Creazione della memoria per la bitmap e il buddy allocator
+    char buffer[bitmap_size];          // Array per la bitmap
+    char memory[memory_size];          // Array per la memoria gestita dal buddy allocator
+
+    // Creazione del BuddyAllocator
+    BuddyAllocator allocator;
+
+    // Inizializzazione del BuddyAllocator
+    int success = BuddyAllocator_init(&allocator, num_levels, buffer, bitmap_size, memory, memory_size, min_bucket_size);
+
+    if (success) {
+        printf("\n\nBuddyAllocator inizializzato correttamente!\n");
+        printf("Numero livelli: %d\n", num_levels);
+        printf("Dimensione memoria: %d byte\n", memory_size);
+        printf("Dimensione minima bucket: %d byte\n\n", min_bucket_size);
     } else {
-        printf("Errore nell'allocazione di 64 byte.\n");
+        printf("Errore nell'inizializzazione del BuddyAllocator.\n");
     }
-
-/*    // Test 2: Allocazione di un blocco grande (es. 2048 byte, quindi mmap)
-    void* block2 = my_malloc(2048);
-    if (block2) {
-        printf("Allocazione di 2048 byte riuscita (usando mmap).\n");
-    } else {
-        printf("Errore nell'allocazione di 2048 byte.\n");
-    } */
-
-    // Test 3: Deallocazione del primo blocco
-    my_free(block1, 64);
-    printf("Deallocazione di 64 byte completata.\n");
-
-    // Test 4: Deallocazione del secondo blocco
-/*    my_free(block2, 2048);
-    printf("Deallocazione di 2048 byte completata.\n"); */
-
-    printf("Tutti i test completati.\n");
 
     return 0;
 }
+
+
 
