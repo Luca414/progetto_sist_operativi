@@ -19,9 +19,10 @@ int main() {
     scanf("%d", &min_bucket_size);
 
     // Calcolo del numero massimo di nodi
-    int max_nodes = (1 << (num_levels + 1)) - 1;
+    int max_nodes = getMaxNodes(num_levels);
+
     // Dimensione della bitmap
-    int bitmap_size = (max_nodes + 7) / 8;
+    int bitmap_size = getBitmapSize(max_nodes);
 
     // Creazione della memoria per la bitmap e il buddy allocator
     char buffer[bitmap_size];          // Array per la bitmap
@@ -33,11 +34,20 @@ int main() {
     // Inizializzazione del BuddyAllocator
     int success = BuddyAllocator_init(&allocator, num_levels, buffer, bitmap_size, memory, memory_size, min_bucket_size);
 
+    int num_bits = max_nodes;
+
     if (success) {
         printf("\n\nBuddyAllocator inizializzato correttamente!\n");
         printf("Numero livelli: %d\n", num_levels);
         printf("Dimensione memoria: %d byte\n", memory_size);
         printf("Dimensione minima bucket: %d byte\n\n", min_bucket_size);
+
+        printf("Il numero di nodi considerando %d livelli è: %d\n",num_levels,max_nodes);
+
+        printf("Prima variabile buffer bitmap: %d \n", *buffer);
+        printf("Il buffer bitmap avrà una dimensione di: %ld bytes \n", sizeof(buffer));
+        printf("Il buffer conterrà : %d bit \n", num_bits); 
+
     } else {
         printf("Errore nell'inizializzazione del BuddyAllocator.\n");
     }
@@ -45,5 +55,7 @@ int main() {
     return 0;
 }
 
+
+// 10 12 24
 
 

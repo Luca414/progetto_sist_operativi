@@ -12,5 +12,5 @@ typedef struct{
 
 int BuddyAllocator_init(BuddyAllocator *alloc, int num_levels, char* buffer, int buffer_size, char* memory, int memory_size, int min_bucket_size);
 
-
+int getBitmapSize(int max_nodes);
 

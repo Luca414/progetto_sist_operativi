@@ -1,5 +1,5 @@
-#include <stdio.h> // Per debug (printf)
-#include <math.h> // per calcoli vari
+#include <stdio.h> 
+#include <math.h> 
 #include <assert.h>
 #include <stdlib.h>
 
@@ -17,10 +17,11 @@ int BuddyAllocator_init(BuddyAllocator *alloc, int num_levels, char* buffer, int
   if(log2(min_bucket_size)!=floor(log2(min_bucket_size))){ printf("Dimensione minima allocabile non è una potenza di 2\n"); return 0;};
   
   // calcolo il numero massimo di nodi dell'albero del buddy
-  int max_nodes = (1<<(num_levels+1))-1; 
-  int bitmap_size = (max_nodes+7)/8;
+  int max_nodes = getMaxNodes(num_levels);
+
+  int bitmap_size = getBitmapSize(max_nodes);
   if (buffer_size<bitmap_size){
-    printf("Dimensione non corretta");
+    printf("Dimensione non corretta\n");
     return 0;
     }
   //qui verifico che la memoria sia allineata correttamente: potenza di 2
@@ -43,6 +44,10 @@ int BuddyAllocator_init(BuddyAllocator *alloc, int num_levels, char* buffer, int
   
 }
 
+int getBitmapSize(int max_nodes){
+    return ((max_nodes+7)/8);
+}
+
 
 
 // Funzione per trovare il livello corretto per l'allocazione
@@ -61,7 +66,7 @@ int BuddyAllocator_findLevel(size_t memory_size, size_t min_bucket_size, size_t 
     int level = 0;
     size_t block_size = memory_size;
     
-    printf("\n\nCerco livello per %d byte di memoria:\n", request_size);
+    printf("\n\nCerco livello per %zu byte di memoria:\n", request_size);
 
     while (block_size > request_size && block_size > min_bucket_size) {
         block_size /= 2; // Dividi il blocco in due
