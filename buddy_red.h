@@ -14,3 +14,7 @@ int BuddyAllocator_init(BuddyAllocator *alloc, int num_levels, char* buffer, int
 
 int getBitmapSize(int max_nodes);
 
+int BuddyAllocator_findLevel(int memory_size, int min_bucket_size, int request_size);
+
+void getNodesInLevel(int level, int* first_node, int* last_node);
+

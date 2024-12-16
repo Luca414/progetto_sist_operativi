@@ -4,19 +4,22 @@
 #include "bit_map_red.h"
 
 int main() {
-    int num_levels, memory_size, min_bucket_size;
-    
+    int num_levels, memory_size, min_bucket_size, request_size;
+
     printf("\n\nConfigurazione buddy allocator:");
 
     // Chiedi all'utente di inserire i parametri
     printf("\nInserisci il numero di livelli dell'albero: ");
     scanf("%d", &num_levels);
 
-    printf("\nInserisci la dimensione totale della memoria (in byte): ");
+    printf("\nInserisci la dimensione totale della memoria (in bit): ");
     scanf("%d", &memory_size);
 
     printf("\nInserisci la dimensione minima di un bucket (in byte): ");
     scanf("%d", &min_bucket_size);
+
+    printf("\nInserisci la dimensione di memoria da allocare (in bit): ");
+    scanf("%d", &request_size);
 
     // Calcolo del numero massimo di nodi
     int max_nodes = getMaxNodes(num_levels);
@@ -44,7 +47,7 @@ int main() {
 
         printf("Il numero di nodi considerando %d livelli è: %d\n",num_levels,max_nodes);
 
-        printf("Prima variabile buffer bitmap: %d \n", *buffer);
+        printf("Prima variabile buffer bitmap: %d \n", buffer[0]);
         printf("Il buffer bitmap avrà una dimensione di: %ld bytes \n", sizeof(buffer));
         printf("Il buffer conterrà : %d bit \n", num_bits); 
 
@@ -52,10 +55,30 @@ int main() {
         printf("Errore nell'inizializzazione del BuddyAllocator.\n");
     }
 
+    int level = BuddyAllocator_findLevel(memory_size, min_bucket_size, request_size);
+
+    printf("\nIl livello adatto ad allocare %d bit è: %d\n",request_size, level);
+    
+    int first_node, last_node;
+    getNodesInLevel(level, &first_node, &last_node);
+    printf("Nel livello %d ci sono i nodi da %d a %d\n\n", level, first_node, last_node);
+
+
+    int free_node = findFreeNodes(first_node, last_node, buffer);
+    printf("Il nodo libero trovato è il nodo: %d\n\n",free_node);
+    
+
+    // se vuoi visualizzare bitmap in formato binario:    
+    //int size = sizeof(buffer) / sizeof(buffer[0]);
+    //printBuffer(buffer,size);
+
+
+    
+
+
     return 0;
 }
 
 
-// 10 12 24
 
 
