@@ -18,3 +18,7 @@ int BitMap_getBytes(int bits);
 int findFreeNodes(int first_node, int last_node, char* buffer); //converto unit8_t in char
 
 void printBuffer(char* buffer, int size);
+
+void updateBitmap(int free_node, char* buffer);
+
+int findParent(int free_node);

@@ -18,3 +18,5 @@ int BuddyAllocator_findLevel(int memory_size, int min_bucket_size, int request_s
 
 void getNodesInLevel(int level, int* first_node, int* last_node);
 
+int findParent(int free_node);
+

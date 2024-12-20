@@ -59,13 +59,13 @@ int findFreeNodes(int first_node, int last_node, char* buffer){
 // Funzione per stampare il buffer
 void printBuffer(char* buffer, int size) {
     printf("{");
-    for (int i = 0; i < size; i++) {
+    for (int i = 0; i < 5; i++) {  // teoricamente ci vorrebbe "size" al posto di 5
         printf("0b");
         // Stampiamo ogni bit del byte da sinistra a destra
         for (int j = 7; j >= 0; j--) {
             printf("%d", (buffer[i] >> j) & 1); // Estraggo il bit j-esimo
         }
-        if (i < size - 1) {
+        if (i < 5 - 1) { // teoricamente ci vorrebbe "size" al posto di 5
             printf(", ");
         }
     }
@@ -73,12 +73,21 @@ void printBuffer(char* buffer, int size) {
 }
 
 
-/*void updateBitmap(int free_node, char* buffer){
+
+void updateBitmap(int free_node, char* buffer){
 
     int byte_index = free_node / 8;
+    int bit_index = free_node % 8;
 
-    buffer[byte_index] |= (1 << free_node); // Imposta il bit ad un valore
-} */
+    int parentNode = findParent(free_node);
+
+    buffer[byte_index] |= (1 << (free_node));  // Cambio il bit di riferimento del nodo libero trovato
+    buffer[byte_index] |= (1 << (parentNode)); // Cambio il bit di riferimento del genitore del nodo libero
+} 
+
+
+
+
 
 
 
