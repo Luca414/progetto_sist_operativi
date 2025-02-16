@@ -22,3 +22,5 @@ void printBuffer(char* buffer, int size);
 void updateBitmap(int free_node, char* buffer);
 
 int findParent(int free_node);
+
+// 16.02.2025

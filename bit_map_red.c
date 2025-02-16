@@ -66,26 +66,24 @@ void printBuffer(char* buffer, int size) {
             printf("%d", (buffer[i] >> j) & 1); // Estraggo il bit j-esimo
         }
         if (i < 5 - 1) { // teoricamente ci vorrebbe "size" al posto di 5
-            printf(", ");
+            printf(", "); 
         }
     }
     printf("}\n");
 }
 
+void updateBitmap(int free_node, char* buffer) {
+    while (free_node >= 0) {
+        int byte_index = free_node / 8; // Trova il byte nel buffer
+        int bit_index = free_node % 8;  // Trova il bit nel byte
+        buffer[byte_index] |= (1 << bit_index); // Imposta il bit a 1
 
+        // Trova il nodo genitore
+        free_node = findParent(free_node);
+    }
+}
 
-void updateBitmap(int free_node, char* buffer){
-
-    int byte_index = free_node / 8;
-    int bit_index = free_node % 8;
-
-    int parentNode = findParent(free_node);
-
-    buffer[byte_index] |= (1 << (free_node));  // Cambio il bit di riferimento del nodo libero trovato
-    buffer[byte_index] |= (1 << (parentNode)); // Cambio il bit di riferimento del genitore del nodo libero
-} 
-
-
+// 16.02.2025
 
 
 

@@ -51,7 +51,7 @@ int getBitmapSize(int max_nodes){
 
 
 // Funzione per trovare il livello corretto per l'allocazione
-int BuddyAllocator_findLevel(int memory_size, int min_bucket_size, int request_size) {
+int BuddyAllocator_findLevel(int memory_size, int min_bucket_size, int request_size) { 
     // Controllo che la richiesta sia valida
     if (request_size > memory_size) {
         printf("Errore: è stata richiesta una quantità di memoria troppo grande.\n");
@@ -61,20 +61,17 @@ int BuddyAllocator_findLevel(int memory_size, int min_bucket_size, int request_s
         printf("Errore: è stata richiesta una quantità di memoria troppo piccola.\n");
         return -1; 
     }
-   
-    // Trova il livello corretto usando le divisioni
-    int level = 0;
-    int block_size = memory_size;
-    
-    //printf("\n\nCerco livello per %zu bit di memoria:\n", request_size);
+   int level = 0;
+    int current_size = memory_size;
 
-    while (block_size > request_size && block_size > min_bucket_size) {
-        block_size /= 2; // Dividi il blocco in due
-        level++;         // Passa al livello successivo
+    // Continua a dimezzare finché la dimensione corrente è maggiore della richiesta
+    while (current_size / 2 >= request_size && current_size / 2 >= min_bucket_size) {
+        current_size /= 2;
+        level++;
     }
 
-    // Ritorna il livello trovato
     return level;
+
 }
 
 // Trova il primo e l'ultimo nodo di un livello
@@ -99,15 +96,17 @@ void findNodeBlocks(int level, int node, int memory_size, int* start_block, int*
     *end_block = *start_block + block_range - 1; // Ultimo blocco
 } 
 
-
-int findParent(int free_node){
-    if(free_node==0){
-        return -1; }
-    return (free_node-1)/2;
-  } 
+  
+  int findParent(int node) {
+    if (node == 0) {
+        return -1; // La radice non ha genitore
+    }
+    return (node - 1) / 2;
+}
 
 
 // =================================================================================================================================
 // =================================================================================================================================
 
+// 16.02.2025
 
