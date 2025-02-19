@@ -19,8 +19,12 @@ int findFreeNodes(int first_node, int last_node, char* buffer); //converto unit8
 
 void printBuffer(char* buffer, int size);
 
-void updateBitmap(int free_node, char* buffer);
+void updateBitmap(int free_node, char* buffer, int requestedSize);
 
 int findParent(int free_node);
 
-// 16.02.2025
+int canAllocate(int node, char* buffer);
+
+
+
+// 19.02.2025

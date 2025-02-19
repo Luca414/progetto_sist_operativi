@@ -15,7 +15,7 @@ int main(){
     printf("\nInserisci il numero di livelli dell'albero: ");
     scanf("%d", &num_levels);
 
-    printf("Inserisci la dimensione totale della memoria (in byte): "); // per come l'hai configurato, così è in byte
+    printf("Inserisci la dimensione totale della memoria (in byte): "); 
     scanf("%d", &memory_size);
 
     printf("Inserisci la dimensione minima di un bucket (in byte): ");
@@ -40,7 +40,7 @@ int main(){
     int success = BuddyAllocator_init(&allocator, num_levels, buffer, bitmap_size, memory, memory_size, min_bucket_size);
     if(success==0)exit(1);
 
-    int num_bits = max_nodes; // ? i bit non dovrebbero essere due per ogni nodo? Ogni nodo ha 0 o 1
+    int num_bits = max_nodes; 
 
     if (success) {
         printf("\nBuddyAllocator inizializzato correttamente!\n\n");
@@ -62,7 +62,7 @@ int main(){
 
     while(isTrue){
         printf("\n\nInizia a chiedere la memoria da allocare, inserisci '-1' per uscire");
-        printf("\nInserisci la dimensione di memoria da allocare (in byte): "); // per come l'hai configurato, così è in byte
+        printf("\nInserisci la dimensione di memoria da allocare (in byte): "); 
         scanf("%d", &request_size);
         if (request_size == -1) {
             break;
@@ -84,7 +84,7 @@ int main(){
             int size = sizeof(buffer) / sizeof(buffer[0]);
             printBuffer(buffer,size);
 
-            updateBitmap(free_node,buffer);
+            updateBitmap(free_node,buffer, request_size); // !!!
             printf("\nBuffer dopo aver lanciato la funzione updateBitmap: ");
 
             printBuffer(buffer,size);
@@ -99,5 +99,4 @@ int main(){
 
 
 
-
-// 16.02.2025
+// 19.02.2025
