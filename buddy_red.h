@@ -20,4 +20,6 @@ void getNodesInLevel(int level, int* first_node, int* last_node);
 
 int findParent(int free_node);
 
-// 16.02.2025
+void* allocateMemory(BuddyAllocator* alloc, int node);
+
+

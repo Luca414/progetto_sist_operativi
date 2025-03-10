@@ -22,9 +22,8 @@ void BitMap_init(BitMap* bit_map, int num_bits, char* buffer){  //converto unit8
   //setto tutti i bit del buffer a zero
   memset(bit_map->buffer, 0, bit_map->buffer_size); // Imposta ogni bit a 0
  
-
-
 }
+
   
 int getMaxNodes(int num_levels) {
     return (1<<(num_levels))-1;
@@ -48,50 +47,9 @@ void printBuffer(char* buffer, int size) {
 }
 
 
-// Flag globale per la prima allocazione. Sto macello è per gestire il caso la prima richiesta occupi il nodo 0.
+// Flag globale per la prima allocazione. Sto macello è per gestire il caso in cui la prima richiesta occupi il nodo 0.
 int isFirstAllocation = 1;
 int isMemoryFullyAllocated = 0;
-
-
-int canAllocate(int node, char* buffer) {
-    if (isMemoryFullyAllocated) {
-        printf("Memoria completamente occupata, nessuna allocazione consentita.\n");
-        return 0;  // Non possiamo allocare più memoria
-    }
-
-    while (node > 0) {
-        int parent = (node - 1) / 2;
-
-        // Se siamo al nodo 0, possiamo sempre allocare
-        if (parent == 0) {
-            return 1;
-        }
-
-        int byte_index = parent / 8;
-        int bit_index = parent % 8;
-        int state = (buffer[byte_index] >> bit_index) & 1;
-
-        printf("Controllo nodo genitore %d: stato = %d\n", parent, state);
-
-        // Trova il buddy del nodo attuale
-        int buddy = (node % 2 == 0) ? (node - 1) : (node + 1);
-
-        // Controlla lo stato del buddy
-        int buddy_byte_index = buddy / 8;
-        int buddy_bit_index = buddy % 8;
-        int buddy_state = (buffer[buddy_byte_index] >> buddy_bit_index) & 1;
-
-        printf("Controllo nodo fratello %d: stato = %d\n", buddy, buddy_state);
-
-        // Se il genitore e il buddy sono occupati, allora non posso allocare
-        if (state == 1 && buddy_state == 1) {
-            return 0;
-        }
-
-        node = parent;  // Salgo al livello superiore
-    }
-    return 1;
-}
 
 
 int findFreeNodes(int first_node, int last_node, char* buffer) {
@@ -112,7 +70,7 @@ int findFreeNodes(int first_node, int last_node, char* buffer) {
             int parent = (i - 1) / 2;
             int valid = 1;
 
-            while (parent > 0) {
+            while (parent > 0) {  // anche quì risalgo tutti i genitori e controllo che siano liberi
                 int p_byte_index = parent / 8;
                 int p_bit_index = parent % 8;
                 int p_state = (buffer[p_byte_index] >> p_bit_index) & 1;
@@ -176,7 +134,46 @@ void updateBitmap(int node, char* buffer, int requestedSize) {
 
 
 
-// 19.02.2025
+
+/*int canAllocate(int node, char* buffer) {
+    if (isMemoryFullyAllocated) {
+        printf("Memoria completamente occupata, nessuna allocazione consentita.\n");
+        return 0;  // Non possiamo allocare più memoria
+    }
+
+    while (node > 0) {   // Una volta trovato il nodo potenzialmente utilizzabile, controllo TUTTI i genitori e vedo se ce n'è uno già occupato
+        int parent = (node - 1) / 2;
+
+        // Se siamo al nodo 0, possiamo sempre allocare
+        if (parent == 0) {
+            return 1;
+        }
+
+        int byte_index = parent / 8;
+        int bit_index = parent % 8;
+        int state = (buffer[byte_index] >> bit_index) & 1;
+
+        printf("Controllo nodo genitore %d: stato = %d\n", parent, state);
+
+        // Trova il buddy del nodo attuale
+        int buddy = (node % 2 == 0) ? (node - 1) : (node + 1);
+
+        // Controlla lo stato del buddy
+        int buddy_byte_index = buddy / 8;
+        int buddy_bit_index = buddy % 8;
+        int buddy_state = (buffer[buddy_byte_index] >> buddy_bit_index) & 1;
+
+        printf("Controllo nodo fratello %d: stato = %d\n", buddy, buddy_state);
+
+        // Se il genitore e il buddy sono occupati, allora non posso allocare
+        if (state == 1 && buddy_state == 1) {
+            return 0;
+        }
+
+        node = parent;  // ricomincio il ciclo salendo al livello superiore
+    }
+    return 1;
+}*/
 
 
 

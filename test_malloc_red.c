@@ -79,15 +79,42 @@ int main(){
             int free_node = findFreeNodes(first_node, last_node, buffer);
             printf("Il nodo libero trovato è il nodo: %d\n\n",free_node);
 
-                // se vuoi visualizzare bitmap in formato binario:
+                
             printf("\nBuffer prima di essere aggiornato:                  ");    
             int size = sizeof(buffer) / sizeof(buffer[0]);
             printBuffer(buffer,size);
 
-            updateBitmap(free_node,buffer, request_size); // !!!
+            updateBitmap(free_node,buffer, request_size); 
             printf("\nBuffer dopo aver lanciato la funzione updateBitmap: ");
 
             printBuffer(buffer,size);
+            
+            printf("\n\n ===============================================\n");
+            printf(" ===============================================");
+            printf("\n\n____________TEST SU ALLOCAZIONE______________\n\n");
+            void* allocated_memory = allocateMemory(&allocator, free_node);
+            
+            //Controllo allocazione
+            if (allocated_memory != NULL) {
+            printf("\nMemoria allocata con successo! Indirizzo: %p\n", allocated_memory);
+            
+            // Scrivo il carattere 'A' nella memoria allocata
+            printf("\nScrivo manualmente il carattere 'A' nella memoria allocata...");
+            *(char*)allocated_memory = 'A';  //casto a char
+            
+            // Calcolo l'offset della memoria allocata nel buffer
+            int offset = (char*)allocated_memory - memory; 
+            
+            // Stampo il carattere in quella zona di memoria
+            printf("\nContenuto di memory[%d]: %c\n", offset, memory[offset]);
+            
+           }
+            
+            else {
+            printf("\nErrore nell'allocazione della memoria.\n");
+            }
+            printf("\n\n ===============================================\n");
+            printf(" ===============================================");
 
         }
     }
@@ -99,4 +126,4 @@ int main(){
 
 
 
-// 19.02.2025
+

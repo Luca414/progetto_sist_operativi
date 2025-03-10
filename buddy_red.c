@@ -24,17 +24,18 @@ int BuddyAllocator_init(BuddyAllocator *alloc, int num_levels, char* buffer, int
     printf("Dimensione non corretta\n");
     return 0;
     }
-  //qui verifico che la memoria sia allineata correttamente: potenza di 2
+  //qui verifico che la memoria sia allineata correttamente, altrimenti arrotondo ad una potenza di 2
   if (log2(memory_size) != floor(log2(memory_size)) ){
     memory_size = min_bucket_size << num_levels;
     }
     
-  alloc->num_levels=num_levels;
+  // popolo i campi della struct   
+  alloc->num_levels=num_levels;     
   alloc->memory=memory;
   alloc->min_bucket_size=min_bucket_size;
   alloc->memory_size=memory_size;
   
-  for (int i=0;i<bitmap_size;i++){
+  for (int i=0;i<bitmap_size;i++){  // popolo la memoria della bitmap, settando ogni byte a 0: libero (nella bitmap init setto i bit a 0)
     buffer[i]=0;
     }
   
@@ -104,9 +105,43 @@ void findNodeBlocks(int level, int node, int memory_size, int* start_block, int*
     return (node - 1) / 2;
 }
 
+/*void* allocateMemory(BuddyAllocator* alloc, int node) {    //prova funzione allocazone
+    if (node < 0) return NULL; // contollo nodo non valido
+
+    int level = floor(log2(node + 1));  // Trovo il livello del nodo
+    int first_node_level = (1 << level) - 1; // Primo nodo del livello
+    int block_size = alloc->memory_size >> level; // Dimensione blocco
+
+    int offset = block_size * (node - first_node_level); // Calcolo l'offset
+    printf("\nValore offset: %d",offset);
+    return alloc->memory + offset; // Restituisco il puntatore alla memoria allocata
+} */
+
+void* allocateMemory(BuddyAllocator* alloc, int node) {    
+    if (node < 0) return NULL; // Controllo nodo non valido
+
+    int level = floor(log2(node + 1));  // Trovo il livello del nodo
+    int first_node_level = (1 << level) - 1; // Primo nodo del livello
+    int block_size = alloc->memory_size >> level; // Dimensione blocco
+
+    int offset = block_size * (node - first_node_level); // Calcolo l'offset
+
+    // Debug print
+    printf("\nNodo: %d", node);
+    printf("\nLivello: %d", level);
+    printf("\nPrimo nodo del livello: %d", first_node_level);
+    printf("\nBlock size: %d", block_size);
+    printf("\nNodo - Primo nodo livello: %d", node - first_node_level);
+    printf("\nValore offset: %d", offset);
+
+    return alloc->memory + offset; // Restituisco il puntatore alla memoria allocata
+}
+
+
+
 
 // =================================================================================================================================
 // =================================================================================================================================
 
-// 16.02.2025
+
 
