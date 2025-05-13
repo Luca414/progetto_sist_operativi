@@ -63,7 +63,7 @@ int findFreeNodes(int first_node, int last_node, char* buffer) {
         int bit_index = i % 8;
         int state = (buffer[byte_index] >> bit_index) & 1;
 
-        printf("Stato nodo %d: %d\n", i, state);
+        printf("\nIl nodo individuato è %d, il suo stato è: %d", i, state);
 
         // Se il nodo è libero, controlliamo i suoi genitori
         if (state == 0) {
@@ -86,11 +86,11 @@ int findFreeNodes(int first_node, int last_node, char* buffer) {
 
                     // Se il buddy è occupato, allora posso allocare in questo nodo
                     if (s_state == 1) {
-                        printf("Il nodo %d è utilizzabile, il suo buddy %d è già allocato.\n", i, sibling);
+                        //printf("Il nodo %d è utilizzabile, il suo buddy %d è già allocato.\n", i, sibling);
                         return i;
                     } else {
                         valid = 0;
-                        printf("Il nodo %d non è utilizzabile perché il suo genitore %d è occupato, il buddy %d è libero.\n", i, parent, sibling);
+                        //printf("Il nodo %d non è utilizzabile perché il suo genitore %d è occupato, il buddy %d è libero.\n", i, parent, sibling);
                         break;
                     }
                 }
@@ -112,7 +112,7 @@ void updateBitmap(int node, char* buffer, int requestedSize) {
     // Verifico se è la prima allocazione
     if (isFirstAllocation && requestedSize >= 524289) {
         // Se la prima allocazione è >= 524289 byte, segnalo la memoria come completamente occupata
-        isMemoryFullyAllocated = 1;  // Imposo la memoria come completamente occupata
+        isMemoryFullyAllocated = 1;  // Imposto la memoria come completamente occupata
     }
 
     // Procedi con la normale allocazione
@@ -132,48 +132,28 @@ void updateBitmap(int node, char* buffer, int requestedSize) {
     }
 }
 
+///////////////////////////////////////////////////// 05 /////////////////////
+
+void setBit(char* bitmap, int index, int value) {
+    int byteIndex = index / 8;
+    int bitOffset = index % 8;
+
+    if (value)
+        bitmap[byteIndex] |= (1 << bitOffset);  // imposta il bit a 1
+    else
+        bitmap[byteIndex] &= ~(1 << bitOffset); // imposta il bit a 0
+}
+
+int getBit(char* bitmap, int index) {
+    int byteIndex = index / 8;
+    int bitOffset = index % 8;
+    return (bitmap[byteIndex] >> bitOffset) & 1;
+}
 
 
 
-/*int canAllocate(int node, char* buffer) {
-    if (isMemoryFullyAllocated) {
-        printf("Memoria completamente occupata, nessuna allocazione consentita.\n");
-        return 0;  // Non possiamo allocare più memoria
-    }
 
-    while (node > 0) {   // Una volta trovato il nodo potenzialmente utilizzabile, controllo TUTTI i genitori e vedo se ce n'è uno già occupato
-        int parent = (node - 1) / 2;
 
-        // Se siamo al nodo 0, possiamo sempre allocare
-        if (parent == 0) {
-            return 1;
-        }
-
-        int byte_index = parent / 8;
-        int bit_index = parent % 8;
-        int state = (buffer[byte_index] >> bit_index) & 1;
-
-        printf("Controllo nodo genitore %d: stato = %d\n", parent, state);
-
-        // Trova il buddy del nodo attuale
-        int buddy = (node % 2 == 0) ? (node - 1) : (node + 1);
-
-        // Controlla lo stato del buddy
-        int buddy_byte_index = buddy / 8;
-        int buddy_bit_index = buddy % 8;
-        int buddy_state = (buffer[buddy_byte_index] >> buddy_bit_index) & 1;
-
-        printf("Controllo nodo fratello %d: stato = %d\n", buddy, buddy_state);
-
-        // Se il genitore e il buddy sono occupati, allora non posso allocare
-        if (state == 1 && buddy_state == 1) {
-            return 0;
-        }
-
-        node = parent;  // ricomincio il ciclo salendo al livello superiore
-    }
-    return 1;
-}*/
 
 
 

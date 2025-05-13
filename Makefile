@@ -1,33 +1,20 @@
-CC=gcc
-CCOPTS=--std=gnu99 -Wall -D_LIST_DEBUG_ 
-AR=ar
+CC = gcc
+CFLAGS = -Wall -Wextra -g
 
-OBJS=bit_map.o\
-     buddy_allocator.o
+# Sorgenti
+SRCS = test_malloc_red.c malloc_red.c buddy_red.c bit_map_red.c
+OBJS = $(SRCS:.c=.o)
 
-HEADERS=bit_map.h buddy_allocator.h
+# Output finale
+TARGET = test_allocator
 
-LIBS=libbuddy.a
+all: $(TARGET)
 
-BINS=buddy_test buddy_allocator_test
-
-.phony: clean all
-
-
-all:	$(LIBS) $(BINS)
-
-%.o:	%.c $(HEADERS)
-	$(CC) $(CCOPTS) -c -o $@  $<
-
-libbuddy.a: $(OBJS) 
-	$(AR) -rcs $@ $^
-	$(RM) $(OBJS)
-
-buddy_test: buddy_test.o $(LIBS)
-	$(CC) $(CCOPTS) -o $@ $^ -lm
-
-buddy_allocator_test: buddy_allocator_test.o $(LIBS)
-	$(CC) $(CCOPTS) -o $@ $^ -lm
+$(TARGET): $(OBJS)
+	$(CC) $(CFLAGS) -o $(TARGET) $(OBJS) -lm
 
 clean:
-	rm -rf *.o *~ $(LIBS) $(BINS)
+	rm -f $(OBJS) $(TARGET)
+
+
+

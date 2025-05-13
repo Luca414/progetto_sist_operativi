@@ -25,5 +25,9 @@ int findParent(int free_node);
 
 int canAllocate(int node, char* buffer);
 
+void setBit(char* bitmap, int index, int value);
+int getBit(char* bitmap, int index);
+
+
 
 
