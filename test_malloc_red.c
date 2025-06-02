@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 #include "malloc_red.h"
 #include "buddy_red.h"
@@ -16,8 +17,30 @@ static char bitmap[BITMAP_SIZE];
 BuddyAllocator allocator;
 
 int main() {
-    printf("\nInizializzazione del BuddyAllocator...\n");
-
+    
+    printf("\n=== TEST INIZIALIZZAZIONE BUDDYALLOCATOR ===\n");
+    printf("Inizializzo il buddyAllocator con valori non corretti: \n\n");
+    
+    printf("\n[TEST 1] Inizializzo con MEMORY_SIZE = 0:\n");
+    if (!BuddyAllocator_init(&allocator, LEVELS, bitmap, BITMAP_SIZE, memory, 0, MIN_BLOCK)) {
+        printf("Errore durante l'inizializzazione del BuddyAllocator!\n");
+    }
+    else printf("Buddy inizializzato con successo");
+    
+    printf("\n[TEST 2] Inizializzo con MIN_BLOCK = 13 (non potenza di 2):\n");
+    if (!BuddyAllocator_init(&allocator, LEVELS, bitmap, BITMAP_SIZE, memory, MEMORY_SIZE, 13)) {
+        printf("Errore durante l'inizializzazione del BuddyAllocator!\n");        
+    }
+    else printf("Buddy inizializzato con successo");
+    
+    printf("\n[TEST 3] Inizializzo con BITMAP_SIZE = 0:\n");
+    if (!BuddyAllocator_init(&allocator, LEVELS, bitmap, 0, memory, MEMORY_SIZE, MIN_BLOCK)) {
+        printf("Errore durante l'inizializzazione del BuddyAllocator!\n");
+        //return 1;
+    }
+    else printf("Buddy inizializzato con successo");
+    
+    printf("\n[TEST 4] Inizializzazione con valori corretti:\n");
     if (!BuddyAllocator_init(&allocator, LEVELS, bitmap, BITMAP_SIZE, memory, MEMORY_SIZE, MIN_BLOCK)) {
         printf("Errore durante l'inizializzazione del BuddyAllocator!\n");
         return 1;
@@ -31,7 +54,7 @@ int main() {
     int size = sizeof(bitmap) / sizeof(bitmap[0]);
     printBuffer(bitmap,size);
     
-    printf("\nProvo ad allocare 10*sizeof(int):");
+    printf("\nProvo ad allocare 10*sizeof(int) = %zu byte:\n", 10 * sizeof(int));
     int* buddy_ptr = (int*) malloc_red(10 * sizeof(int));
     if (!buddy_ptr) {
         printf("Errore: buddy_malloc fallita.\n");
@@ -65,7 +88,7 @@ int main() {
     // Libera entrambe
     printf("\n\n=== LIBERAZIONE BUDDY ===\n");
     free_red(buddy_ptr);
-    printf("Buffer dopo aver liberato: ");
+    printf("Buffer (bitmap) dopo aver liberato: ");
     printBuffer(bitmap,size); //BuddyAllocator_print(&allocator);
 
     printf("\n=== FREE MMAP ===\n");
@@ -110,20 +133,33 @@ int main() {
     memset(p3, 3, 80);  
     
     printf("\n\n== FREE IN ORDINE DIVERSO DA QUELLO DELL'ALLOCAZIONE == \n\n");
-    printf("Libero il blocco da 200 byte: ");
+    printf("Libero il blocco p2 da 200 byte: ");
     free_red(p2);
     printf("Buffer: ");
     printBuffer(bitmap, size);
 
-    printf("\n\nLibero il blocco da 128 byte: ");
+    printf("\n\nLibero il blocco p1 da 128 byte: ");
     free_red(p1);
     printf("Buffer: ");
     printBuffer(bitmap, size);
 
-    printf("\n\nLibero il blocco da 80 byte: ");
+    printf("\n\nLibero il blocco p3 da 80 byte: ");
     free_red(p3);
     printf("Buffer: ");
     printBuffer(bitmap, size);
+
+    bool tutto_libero = true;
+    for (int i = 0; i < size; ++i) {
+      if (bitmap[i] != 0) {
+        tutto_libero = false;
+        break;
+      }
+    }
+    
+    if (tutto_libero)
+      printf("\nTutti i blocchi sono stati liberati correttamente: ogni elemento della bitmap è = 0\n");
+    else
+    printf("\nAttenzione: alcuni blocchi risultano ancora occupati.\n");
 
 
     printf("\n\n ========== Tutti i test completati con successo! ==========\n\n");

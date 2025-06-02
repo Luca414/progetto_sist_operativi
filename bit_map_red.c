@@ -32,6 +32,7 @@ int getMaxNodes(int num_levels) {
 
 // Funzione per stampare il buffer
 void printBuffer(char* buffer, int size) {
+    (void)size;
     printf("{");
     for (int i = 0; i < 5; i++) {  // teoricamente ci vorrebbe "size" al posto di 5
         printf("0b");

@@ -21,7 +21,7 @@ int BuddyAllocator_init(BuddyAllocator *alloc, int num_levels, char* buffer, int
 
   int bitmap_size = getBitmapSize(max_nodes);
   if (buffer_size<bitmap_size){
-    printf("Dimensione non corretta\n");
+    printf("Dimensione bitmap non corretta\n");
     return 0;
     }
   //qui verifico che la memoria sia allineata correttamente, altrimenti arrotondo ad una potenza di 2
@@ -159,6 +159,7 @@ void* buddy_malloc(BuddyAllocator* alloc, int request_size, char* buffer) {
 
 
 void buddy_free(BuddyAllocator* alloc, void* ptr, char* buffer) {
+    (void)alloc;
     if (ptr == NULL) return;
 
     // Torna indietro di 8 byte per ottenere l'header
